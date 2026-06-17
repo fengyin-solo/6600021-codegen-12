@@ -6,8 +6,11 @@ export const BRAILLE_MAP: Record<string, number[]> = {
   'P': [1,2,3,4], 'Q': [1,2,3,4,5], 'R': [1,2,3,5], 'S': [2,3,4], 'T': [2,3,4,5],
   'U': [1,3,6], 'V': [1,2,3,6], 'W': [2,4,5,6], 'X': [1,3,4,6], 'Y': [1,3,4,5,6], 'Z': [1,3,5,6],
   '1': [1], '2': [1,2], '3': [1,4], '4': [1,4,5], '5': [1,5],
-  '0': [2,4,5], ' ': [],
+  '6': [1,2,4], '7': [1,2,4,5], '8': [1,2,5], '9': [2,4], '0': [2,4,5],
+  ' ': [],
 }
+
+export const BRAILLE_LETTER_PRIORITY = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' ']
 
 // Dot positions in 2x3 grid (col, row): 1=(0,0), 2=(0,1), 3=(0,2), 4=(1,0), 5=(1,1), 6=(1,2)
 export const DOT_POSITIONS: Record<number, [number, number]> = {
@@ -20,8 +23,12 @@ export function textToBraille(text: string): number[][] {
 }
 
 export function brailleToText(dots: number[]): string {
+  const sortedDots = JSON.stringify([...dots].sort())
+  for (const char of BRAILLE_LETTER_PRIORITY) {
+    if (JSON.stringify([...BRAILLE_MAP[char]].sort()) === sortedDots) return char
+  }
   for (const [char, d] of Object.entries(BRAILLE_MAP)) {
-    if (JSON.stringify(d.sort()) === JSON.stringify([...dots].sort())) return char
+    if (JSON.stringify(d.sort()) === sortedDots) return char
   }
   return '?'
 }
